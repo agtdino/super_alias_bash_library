@@ -1,6 +1,113 @@
+##############################################
+#   SUPER LIBRERY for IT ADMINISTRATORs
+#   Alias y funciones Bash organizadas por:
+#   - systems administrators
+#   - Security
+#   
+##############################################
+
+
+###########################################################
+#  systems administrators
+###########################################################
+
+
+alias ...='cd ../..'
+alias ..='cd ..'
+alias cls='clear'
+alias cpu='top -o %CPU'
+alias dfh='df -hT'
+alias la='ls -lah'
+alias ll='ls -lh'
+alias mem='free -h'
+alias nettop='sudo nethogs'
+alias ports='sudo ss -tulpn'
+
+# Gestión de paquetes
+alias cleanup='sudo apt autoremove -y && sudo apt autoclean'
+alias up='sudo apt update && sudo apt upgrade -y'
+
+# Systemd helpers
+alias sdis='sudo systemctl disable'
+alias sen='sudo systemctl enable'
+alias sre='sudo systemctl restart'
+alias sru='sudo systemctl reload'
+alias sst='sudo systemctl status'
+
 # ssh conections
 alias ssh_run_agent='eval $(ssh-agent -s) && ssh-add'
 
 # text-util
 alias grep_configfile="grep -Ev '^[[:blank:]]*(#|$)'"
 
+
+# 20 folders/files too big ()
+alias find_bigfolder='du -h --max-depth=1 "${1:-.}" | sort -hr | head -20'
+
+# find file is growing
+alias find_filegrowing='watch -n 1 "du -h $1 | sort -hr | head"'
+
+# Buscar errores típicos en /var/log/
+alias find_error="sudo grep -Ri "err\|error\|fail\|fatal""
+
+# Filtrar logs en tiempo real con búsqueda
+flog() {
+    sudo tail -f "$1" | grep --line-buffered -i "$2"
+}
+
+# Limpiar archivos antiguos
+cleanup_old() {
+  if [ -z $2 ]; then
+     exit 1
+  fi
+  find "$1" -type f -mtime +"$2" -exec rm -v {} \;
+}
+
+# Comprobación HTTP rápida
+httpcheck() {
+    curl -I --max-time 5 "$1"
+}
+
+# Mostrar configuración cargada por nginx
+ngconf() {
+    nginx -T | less
+}
+
+# Test de red (DNS + ping)
+nettest() {
+    echo "== DNS check =="
+    dig +short "$1"
+    echo ""
+    echo "== Ping =="
+    ping -c 4 "$1"
+}
+
+# Mostrar quién ocupa un puerto
+whosonport() {
+    sudo lsof -i :"$1"
+}
+
+# Últimos inicios de sesión
+lastlogins() {
+    last -n 20
+}
+
+# Ver si existe un usuario
+userexists() {
+    id "$1" &>/dev/null && echo "Usuario existe" || echo "No existe"
+}
+
+
+# --------------
+# SEGURITY
+# --------------
+
+# Mostrar accesos SSH recientes
+sshlog() {
+    sudo grep "Accepted" /var/log/auth.log | tail -20
+}
+
+# Comparar sudoers con versión tmp (detección de cambios)
+sudoersdiff() {
+    sudo diff /etc/sudoers /etc/sudoers.tmp 2>/dev/null || echo "No hay archivo tmp"
+}
