@@ -1,0 +1,6 @@
+# ssh conections
+alias ssh_run_agent='eval $(ssh-agent -s) && ssh-add'
+
+# text-util
+alias grep_configfile="grep -Ev '^[[:blank:]]*(#|$)'"
+
